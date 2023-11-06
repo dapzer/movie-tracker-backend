@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model user {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String?
+  email      String      @unique
+  image      String?
+  mediaLists mediaList[]
+  accounts   account[]
+}
+
+model mediaList {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String      @db.ObjectId
+  user       user        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String?
+  poster     String?
+  isPublic   Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt()
+  mediaItems mediaItem[]
+}
+
+model mediaItem {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  mediaListId  String       @db.ObjectId
+  mediaList    mediaList    @relation(fields: [mediaListId], references: [id], onDelete: Cascade)
+  mediaId      Int          @unique
+  mediaType    MediaType
+  trackingData TrackingData
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt()
+}
+
+type TrackingData {
+  currentStatus StatusName
+  note          String
+  sitesToView   SiteToView[]
+  seriesInfo    SeriesInfo
+}
+
+type SeriesInfo {
+  currentSeason  Int
+  currentEpisode Int
+}
+
+type SiteToView {
+  url String
+}
+
+enum StatusName {
+  VIEWED
+  WATCHING_NOW
+  NOT_VIEWED
+  WAIT_NEW_PART
+}
+
+enum MediaType {
+  MOVIE
+  TV
+}
