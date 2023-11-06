@@ -51,18 +51,18 @@ model mediaList {
 }
 
 model mediaItem {
-  id           String       @id @default(auto()) @map("_id") @db.ObjectId
-  mediaListId  String       @db.ObjectId
-  mediaList    mediaList    @relation(fields: [mediaListId], references: [id], onDelete: Cascade)
-  mediaId      Int          @unique
-  mediaType    MediaType
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  mediaListId  String        @db.ObjectId
+  mediaList    mediaList     @relation(fields: [mediaListId], references: [id], onDelete: Cascade)
+  mediaId      Int           @unique
+  mediaType    MediaTypeEnum
   trackingData TrackingData
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt()
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt()
 }
 
 type TrackingData {
-  currentStatus StatusName
+  currentStatus StatusNameEnum
   note          String
   sitesToView   SiteToView[]
   seriesInfo    SeriesInfo
@@ -77,14 +77,14 @@ type SiteToView {
   url String
 }
 
-enum StatusName {
+enum StatusNameEnum {
   VIEWED
   WATCHING_NOW
   NOT_VIEWED
   WAIT_NEW_PART
 }
 
-enum MediaType {
+enum MediaTypeEnum {
   MOVIE
   TV
 }
