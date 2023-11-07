@@ -7,5 +7,6 @@ import { PrismaService } from '@/services/prisma.service';
   imports: [],
   controllers: [MediaListController],
   providers: [MediaListService, PrismaService],
+  exports: [MediaListService],
 })
 export class MediaListModule {}
