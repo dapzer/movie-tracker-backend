@@ -18,6 +18,14 @@ export class MediaListService {
     });
   }
 
+  async getMedialListByUserId(userId: string) {
+    return this.prisma.mediaList.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
   async createMediaList(userId: string) {
     return this.prisma.mediaList.create({
       data: {
