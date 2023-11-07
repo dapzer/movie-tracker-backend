@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { MediaListService } from '@/routes/mediaList/mediaList.service';
 import { MongoDbIdDto } from '@/shared/dto/mongoDbId.dto';
 import { UpdateMediaListDto } from '@/routes/mediaList/dto/updateMediaList.dto';
@@ -29,5 +37,10 @@ export class MediaListController {
     @Body() body: UpdateMediaListDto,
   ) {
     return this.mediaListService.updateMediaList(params.id, body);
+  }
+
+  @Delete(':id')
+  async deleteMediaList(@Param() params: MongoDbIdDto) {
+    return this.mediaListService.deleteMediaList(params.id);
   }
 }

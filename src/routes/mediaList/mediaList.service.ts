@@ -42,4 +42,10 @@ export class MediaListService {
       },
     });
   }
+
+  async deleteMediaList(id: string) {
+    return this.prisma.mediaList.delete({
+      where: { id },
+    });
+  }
 }
