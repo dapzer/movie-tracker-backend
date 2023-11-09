@@ -66,6 +66,7 @@ model mediaItem {
 type TrackingData {
   currentStatus StatusNameEnum
   note          String
+  score         Int?
   sitesToView   SiteToView[]
   seriesInfo    SeriesInfo
 }

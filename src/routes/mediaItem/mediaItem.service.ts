@@ -35,6 +35,7 @@ export class MediaItemService {
           currentStatus: StatusNameEnum.NOT_VIEWED,
           note: '',
           sitesToView: [],
+          score: null,
           seriesInfo: {
             currentSeason: 0,
             currentEpisode: 1,
