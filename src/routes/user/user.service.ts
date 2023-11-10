@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/services/prisma.service';
-import { MediaListService } from '@/routes/mediaList/mediaList.service';
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  MediaListRepositoryInterface,
+  MediaListRepositorySymbol,
+} from '@/repositories/mediaList/MediaListRepositoryInterface';
 
 @Injectable()
 export class UserService {
   constructor(
-    private prisma: PrismaService,
-    private mediaListService: MediaListService,
+    @Inject(MediaListRepositorySymbol)
+    private readonly mediaListRepository: MediaListRepositoryInterface,
   ) {}
 
   async getUserMediaListsById(userId: string) {
-    return this.mediaListService.getMedialListByUserId(userId);
+    return this.mediaListRepository.getMedialListsByUserId(userId);
   }
 }

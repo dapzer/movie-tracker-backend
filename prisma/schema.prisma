@@ -10,7 +10,7 @@ datasource db {
   url      = env("MONGODB_URI")
 }
 
-model account {
+model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @db.ObjectId
   type              String
@@ -24,36 +24,42 @@ model account {
   id_token          String? @db.String
   session_state     String?
 
-  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
-model user {
+model User {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   name       String?
   email      String      @unique
   image      String?
-  mediaLists mediaList[]
-  accounts   account[]
+  mediaLists MediaList[]
+  accounts   Account[]
+
+  @@map("users")
 }
 
-model mediaList {
+model MediaList {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   userId     String      @db.ObjectId
-  user       user        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   title      String?
   poster     String?
+  isSystem   Boolean     @default(false)
   isPublic   Boolean     @default(false)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt()
-  mediaItems mediaItem[]
+  mediaItems MediaItem[]
+
+  @@map("mediaLists")
 }
 
-model mediaItem {
+model MediaItem {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   mediaListId  String        @db.ObjectId
-  mediaList    mediaList     @relation(fields: [mediaListId], references: [id], onDelete: Cascade)
+  mediaList    MediaList     @relation(fields: [mediaListId], references: [id], onDelete: Cascade)
   mediaId      Int
   mediaType    MediaTypeEnum
   trackingData TrackingData
@@ -61,6 +67,7 @@ model mediaItem {
   updatedAt    DateTime      @updatedAt()
 
   @@unique([mediaId, mediaType, mediaListId])
+  @@map("mediaItems")
 }
 
 type TrackingData {

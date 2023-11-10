@@ -1,8 +1,8 @@
-import { mediaList } from '@prisma/client';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { MediaListDto } from '@/routes/mediaList/dto/mediaList.dto';
 
 export class UpdateMediaListDto
-  implements Pick<mediaList, 'title' | 'isPublic' | 'poster'>
+  implements Pick<MediaListDto, 'title' | 'isPublic' | 'poster'>
 {
   @IsOptional()
   @IsBoolean()

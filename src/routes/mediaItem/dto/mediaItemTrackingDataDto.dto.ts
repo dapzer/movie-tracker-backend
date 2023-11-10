@@ -3,6 +3,7 @@ import {
   IsArray,
   IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -17,6 +18,7 @@ export class MediaItemTrackingDataDto implements TrackingData {
   @IsString()
   note: string;
 
+  @IsOptional()
   @IsNumber()
   score: number | null;
 

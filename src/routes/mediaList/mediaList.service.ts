@@ -1,51 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { UpdateMediaListDto } from '@/routes/mediaList/dto/updateMediaList.dto';
+import {
+  MediaListRepositoryInterface,
+  MediaListRepositorySymbol,
+} from '@/repositories/mediaList/MediaListRepositoryInterface';
 
 @Injectable()
 export class MediaListService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject(MediaListRepositorySymbol)
+    private readonly mediaListRepository: MediaListRepositoryInterface,
+  ) {}
 
   async getAllMedialLists() {
-    return this.prisma.mediaList.findMany();
+    return this.mediaListRepository.getAllMedialLists();
   }
 
   async getMedialListById(id: string) {
-    return this.prisma.mediaList.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    return this.mediaListRepository.getMedialListById(id);
   }
 
   async getMedialListByUserId(userId: string) {
-    return this.prisma.mediaList.findMany({
-      where: {
-        userId,
-      },
-    });
+    return this.mediaListRepository.getMedialListsByUserId(userId);
   }
 
   async createMediaList(userId: string) {
-    return this.prisma.mediaList.create({
-      data: {
-        userId,
-      },
-    });
+    return this.mediaListRepository.createMediaList(userId);
   }
 
   async updateMediaList(id: string, body: UpdateMediaListDto) {
-    return this.prisma.mediaList.update({
-      where: { id },
-      data: {
-        ...body,
-      },
-    });
+    return this.mediaListRepository.updateMediaList(id, body);
   }
 
   async deleteMediaList(id: string) {
-    return this.prisma.mediaList.delete({
-      where: { id },
-    });
+    return this.mediaListRepository.deleteMediaList(id);
   }
 }
