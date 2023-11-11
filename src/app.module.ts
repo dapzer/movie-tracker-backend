@@ -5,6 +5,7 @@ import { MediaItemModule } from '@/routes/mediaItem/mediaItem.module';
 import { UserModule } from './routes/user/user.module';
 import { ProxyModule } from './routes/proxy/proxy.module';
 import { PrismaModule } from '@/services/prisma.module';
+import { AuthModule } from '@/routes/auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PrismaModule } from '@/services/prisma.module';
     UserModule,
     ProxyModule,
     PrismaModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

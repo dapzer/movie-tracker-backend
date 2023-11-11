@@ -8,7 +8,6 @@ export class PrismaMediaListRepository implements MediaListRepositoryInterface {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllMedialLists() {
-    console.log();
     return this.prisma.mediaList.findMany();
   }
 

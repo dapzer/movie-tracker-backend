@@ -2,20 +2,27 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app.module';
 import 'dotenv/config';
 import { ConfigService } from '@nestjs/config';
-import { AuthGuard } from '@/guards/auth.guard';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
+import { PrismaClientErrorFilter } from '@/filters/prismaClientError.filter';
+import { AllExceptionsFilter } from '@/filters/allException.filter';
+import { getMillisecondsFromDays } from '@/shared/utils/getMillisecondsFromDays';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { abortOnError: false });
   const configService = app.get(ConfigService);
   const httpAdapter = app.get(HttpAdapterHost);
 
+  app.enableCors({
+    origin: '*',
+    methods: '*',
+    credentials: true,
+  });
+
   app.setGlobalPrefix('/api');
-  // app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
-  // app.useGlobalFilters(new PrismaClientErrorFilter(httpAdapter));
-  app.useGlobalGuards(new AuthGuard());
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+  app.useGlobalFilters(new PrismaClientErrorFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.use(cookieParser(configService.get('COOKIE_SECRET')));
   app.use(
@@ -23,6 +30,11 @@ async function bootstrap() {
       secret: configService.get('SESSION_SECRET'),
       resave: false,
       saveUninitialized: false,
+      cookie: {
+        sameSite: true,
+        httpOnly: true,
+        maxAge: getMillisecondsFromDays(7),
+      },
     }),
   );
 
