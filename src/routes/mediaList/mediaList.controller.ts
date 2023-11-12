@@ -15,7 +15,7 @@ import { UpdateMediaListDto } from '@/routes/mediaList/dto/updateMediaList.dto';
 import { AuthGuard } from '@/routes/auth/guards/auth.guard';
 import { User } from '@/routes/user/users.decorator';
 import { UserDto } from '@/routes/auth/dto/user.dto';
-import { UserIdDto } from '@/shared/dto/userId.dto';
+import { GetAllMediaListsDto } from '@/routes/mediaList/dto/getAllMediaLists.dto';
 
 @Controller('mediaList')
 export class MediaListController {
@@ -23,7 +23,7 @@ export class MediaListController {
 
   @Get()
   async getMedialListByUserId(
-    @Query() queries: UserIdDto,
+    @Query() queries: GetAllMediaListsDto,
     @User() user: UserDto,
   ) {
     if (queries.userId) {
@@ -33,7 +33,7 @@ export class MediaListController {
       );
     }
 
-    return this.mediaListService.getAllMedialLists(true);
+    return this.mediaListService.getMedialListByUserId(user?.id, user?.id);
   }
 
   @Get(':id')

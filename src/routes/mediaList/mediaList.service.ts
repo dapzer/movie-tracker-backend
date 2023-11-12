@@ -70,10 +70,18 @@ export class MediaListService {
   }
 
   async deleteMediaList(id: string, userId: string) {
-    const isListOwner = await this.isListOwner(id, userId);
+    const mediaList = await this.mediaListRepository.getMedialListById(id);
+    const isListOwner = await this.isListOwner(id, userId, mediaList);
 
     if (isListOwner) {
       throw new HttpException('Unauthorized.', HttpStatus.UNAUTHORIZED);
+    }
+
+    if (mediaList.isSystem) {
+      throw new HttpException(
+        'System media list cannot be deleted.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return this.mediaListRepository.deleteMediaList(id);
