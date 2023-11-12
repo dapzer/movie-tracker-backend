@@ -4,8 +4,8 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Post,
   Query,
-  Redirect,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -27,7 +27,6 @@ export class AuthController {
 
   @Get('/callback/:provider')
   @UseGuards(AuthProviderGuard)
-  @Redirect()
   async callBack(
     @Req() req: Request,
     @Query('code') code: string,
@@ -66,7 +65,6 @@ export class AuthController {
   }
 
   @Get(['/connect/:provider', '/login/:provider'])
-  @Redirect()
   @UseGuards(AuthProviderGuard)
   async connect(
     @Req() req: Request,
@@ -79,8 +77,7 @@ export class AuthController {
     };
   }
 
-  // можно и post, я тут сделал так для простоты теста
-  @Get('/logout')
+  @Post('/logout')
   @UseGuards(AuthGuard)
   async logout(@Req() req: Request) {
     return new Promise((resolve, reject) => {
