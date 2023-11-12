@@ -4,12 +4,14 @@ import { ProviderOptsType } from '@/routes/auth/providers/services/types/provide
 
 export class VkProvider extends BaseService {
   constructor(opts: ProviderOptsType) {
+    const vkApiVersion = '5.154';
+
     super({
       name: 'vk',
 
-      authorize_url: 'https://oauth.vk.com/authorize',
-      access_url: 'https://oauth.vk.com/access_token',
-      profile_url: 'https://api.vk.com/method/users.get',
+      authorize_url: `https://oauth.vk.com/authorize?v=${vkApiVersion}`,
+      access_url: `https://oauth.vk.com/access_token?v=${vkApiVersion}`,
+      profile_url: `https://api.vk.com/method/users.get?v=${vkApiVersion}`,
 
       scopes: opts.scopes,
       client_id: opts.client_id,

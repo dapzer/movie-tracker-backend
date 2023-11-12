@@ -33,7 +33,7 @@ import { PrismaAccountRepository } from '@/repositories/account/PrismaAccountRep
             new YandexProvider({
               client_id: configService.get('YANDEX_CLIENT_ID')!,
               client_secret: configService.get('YANDEX_CLIENT_SECRET')!,
-              scopes: ['login:email'],
+              scopes: ['login:email', 'login:avatar', 'login:info'],
             }),
             new VkProvider({
               client_id: configService.get('VK_CLIENT_ID')!,

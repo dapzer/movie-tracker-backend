@@ -7,9 +7,9 @@ export class YandexProvider extends BaseService {
     super({
       name: 'yandex',
 
-      authorize_url: 'https://accounts.google.com/o/oauth2/v2/auth',
-      access_url: 'https://oauth2.googleapis.com/token',
-      profile_url: 'https://www.googleapis.com/oauth2/v3/userinfo',
+      authorize_url: 'https://oauth.yandex.ru/authorize',
+      access_url: 'https://oauth.yandex.ru/token',
+      profile_url: 'https://login.yandex.ru/info?format=json',
 
       scopes: opts.scopes,
       client_id: opts.client_id,
