@@ -12,9 +12,9 @@ export class UserDto implements User {
   @IsMongoId()
   id: string;
 
-  @IsOptional()
-  @IsString()
-  userName: string;
+  // @IsOptional()
+  // @IsString()
+  // userName: string;
 
   @IsString()
   name: string;

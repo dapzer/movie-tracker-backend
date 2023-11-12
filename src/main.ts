@@ -8,11 +8,15 @@ import * as session from 'express-session';
 import { PrismaClientErrorFilter } from '@/filters/prismaClientError.filter';
 import { AllExceptionsFilter } from '@/filters/allException.filter';
 import { getMillisecondsFromDays } from '@/shared/utils/getMillisecondsFromDays';
+import { PrismaService } from '@/services/prisma.service';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import { getMillisecondsFromMins } from '@/shared/utils/getMillisecondsFromMins';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { abortOnError: false });
   const configService = app.get(ConfigService);
   const httpAdapter = app.get(HttpAdapterHost);
+  const prisma = app.get(PrismaService);
 
   app.enableCors({
     origin: '*',
@@ -35,6 +39,11 @@ async function bootstrap() {
         httpOnly: true,
         maxAge: getMillisecondsFromDays(7),
       },
+      store: new PrismaSessionStore(prisma, {
+        checkPeriod: getMillisecondsFromMins(5),
+        dbRecordIdIsSessionId: true,
+        dbRecordIdFunction: undefined,
+      }),
     }),
   );
 

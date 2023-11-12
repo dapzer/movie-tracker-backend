@@ -33,8 +33,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const errorMessage =
       exception instanceof HttpException
         ? `${exception.message}${
-            isArray(errorResponseMessage) &&
-            `, ${errorResponseMessage?.join(', ')}`
+            isArray(errorResponseMessage)
+              ? `, ${errorResponseMessage?.join(', ')}`
+              : ''
           }`
         : 'Unknown error';
 
