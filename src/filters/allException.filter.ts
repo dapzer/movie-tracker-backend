@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
+import { isArray } from 'class-validator';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -24,8 +25,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    const errorResponseMessage =
+      exception instanceof HttpException
+        ? (exception.getResponse() as any).message
+        : '';
+
     const errorMessage =
-      exception instanceof HttpException ? exception.message : '';
+      exception instanceof HttpException
+        ? `${exception.message}${
+            isArray(errorResponseMessage) &&
+            `, ${errorResponseMessage?.join(', ')}`
+          }`
+        : 'Unknown error';
 
     const responseBody = {
       statusCode: httpStatus,
