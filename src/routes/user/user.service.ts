@@ -11,6 +11,10 @@ export class UserService {
     private readonly userRepository: UserRepositoryInterface,
   ) {}
 
+  async getUser(id: string) {
+    return this.userRepository.getUserById(id);
+  }
+
   async deleteUser(id: string, currentUserId: string) {
     if (currentUserId !== id) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
