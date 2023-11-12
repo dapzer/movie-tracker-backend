@@ -12,6 +12,8 @@ import { UserRepositorySymbol } from '@/repositories/user/UserRepositoryInterfac
 import { PrismaUserRepository } from '@/repositories/user/PrismaUserRepository';
 import { AccountRepositorySymbol } from '@/repositories/account/AccountRepositoryInterface';
 import { PrismaAccountRepository } from '@/repositories/account/PrismaAccountRepository';
+import { MediaListRepositorySymbol } from '@/repositories/mediaList/MediaListRepositoryInterface';
+import { PrismaMediaListRepository } from '@/repositories/mediaList/PrismaMediaListRepository';
 
 @Module({
   imports: [
@@ -56,6 +58,10 @@ import { PrismaAccountRepository } from '@/repositories/account/PrismaAccountRep
     {
       provide: AccountRepositorySymbol,
       useClass: PrismaAccountRepository,
+    },
+    {
+      provide: MediaListRepositorySymbol,
+      useClass: PrismaMediaListRepository,
     },
   ],
   exports: [AuthService],

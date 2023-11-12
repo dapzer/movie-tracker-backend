@@ -10,6 +10,10 @@ import {
   AccountRepositoryInterface,
   AccountRepositorySymbol,
 } from '@/repositories/account/AccountRepositoryInterface';
+import {
+  MediaListRepositoryInterface,
+  MediaListRepositorySymbol,
+} from '@/repositories/mediaList/MediaListRepositoryInterface';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +24,8 @@ export class AuthService {
     private readonly usersRepository: UserRepositoryInterface,
     @Inject(AccountRepositorySymbol)
     private readonly accountRepository: AccountRepositoryInterface,
+    @Inject(MediaListRepositorySymbol)
+    private readonly mediaListRepository: MediaListRepositoryInterface,
   ) {}
 
   async extractProfileFromCode(provider: AllowedProvider, code: string) {
@@ -40,15 +46,17 @@ export class AuthService {
         name: profile.name,
         image: profile.avatarUrl,
       });
-    }
-
-    if (!account) {
+    } else {
       user = await this.usersRepository.createUser({
         email: profile.email,
         name: profile.name,
         image: profile.avatarUrl,
       });
 
+      await this.mediaListRepository.createMediaList(user.id, true);
+    }
+
+    if (!account) {
       await this.accountRepository.createAccount({
         userId: user.id,
         type: 'oauth',
