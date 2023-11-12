@@ -3,11 +3,14 @@ import { MediaListDto } from '@/routes/mediaList/dto/mediaList.dto';
 export const MediaListRepositorySymbol = Symbol();
 
 export interface MediaListRepositoryInterface {
-  getAllMedialLists: () => Promise<MediaListDto[]>;
+  getAllMedialLists: (isPublicOnly?: boolean) => Promise<MediaListDto[]>;
 
   getMedialListById: (id: string) => Promise<MediaListDto>;
 
-  getMedialListsByUserId: (userId: string) => Promise<MediaListDto[]>;
+  getMedialListsByUserId: (
+    userId: string,
+    isPublicOnly?: boolean,
+  ) => Promise<MediaListDto[]>;
 
   createMediaList: (
     userId: string,

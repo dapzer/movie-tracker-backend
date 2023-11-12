@@ -7,8 +7,12 @@ import { Injectable } from '@nestjs/common';
 export class PrismaMediaListRepository implements MediaListRepositoryInterface {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllMedialLists() {
-    return this.prisma.mediaList.findMany();
+  async getAllMedialLists(isPublicOnly = false) {
+    return this.prisma.mediaList.findMany({
+      where: {
+        ...(isPublicOnly && { isPublic: true }),
+      },
+    });
   }
 
   async getMedialListById(id: string) {
@@ -19,10 +23,11 @@ export class PrismaMediaListRepository implements MediaListRepositoryInterface {
     });
   }
 
-  async getMedialListsByUserId(userId: string) {
+  async getMedialListsByUserId(userId: string, isPublicOnly = false) {
     return this.prisma.mediaList.findMany({
       where: {
         userId,
+        ...(isPublicOnly && { isPublic: true }),
       },
     });
   }

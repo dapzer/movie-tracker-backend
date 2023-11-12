@@ -6,41 +6,63 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MediaListService } from '@/routes/mediaList/mediaList.service';
 import { MongoDbIdDto } from '@/shared/dto/mongoDbId.dto';
 import { UpdateMediaListDto } from '@/routes/mediaList/dto/updateMediaList.dto';
+import { AuthGuard } from '@/routes/auth/guards/auth.guard';
+import { User } from '@/routes/user/users.decorator';
+import { UserDto } from '@/routes/auth/dto/user.dto';
+import { UserIdDto } from '@/shared/dto/userId.dto';
 
 @Controller('mediaList')
 export class MediaListController {
   constructor(private readonly mediaListService: MediaListService) {}
 
   @Get()
-  async getAllMedialLists() {
-    return this.mediaListService.getAllMedialLists();
+  async getMedialListByUserId(
+    @Query() queries: UserIdDto,
+    @User() user: UserDto,
+  ) {
+    if (queries.userId) {
+      return this.mediaListService.getMedialListByUserId(
+        queries.userId,
+        user?.id,
+      );
+    }
+
+    return this.mediaListService.getAllMedialLists(true);
   }
 
   @Get(':id')
-  async getMedialListById(@Param() params: MongoDbIdDto) {
-    return this.mediaListService.getMedialListById(params.id);
+  async getMedialListById(
+    @Param() params: MongoDbIdDto,
+    @User() user: UserDto,
+  ) {
+    return this.mediaListService.getMedialListById(params.id, user?.id);
   }
 
   @Post()
-  async createMediaList() {
-    const userId = '6548ffd3e60539c3203bc77b';
-    return this.mediaListService.createMediaList(userId);
+  @UseGuards(AuthGuard)
+  async createMediaList(@User() user: UserDto) {
+    return this.mediaListService.createMediaList(user?.id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   async updateMediaList(
     @Param() params: MongoDbIdDto,
     @Body() body: UpdateMediaListDto,
+    @User() user: UserDto,
   ) {
-    return this.mediaListService.updateMediaList(params.id, body);
+    return this.mediaListService.updateMediaList(params.id, body, user?.id);
   }
 
   @Delete(':id')
-  async deleteMediaList(@Param() params: MongoDbIdDto) {
-    return this.mediaListService.deleteMediaList(params.id);
+  @UseGuards(AuthGuard)
+  async deleteMediaList(@Param() params: MongoDbIdDto, @User() user: UserDto) {
+    return this.mediaListService.deleteMediaList(params.id, user?.id);
   }
 }
