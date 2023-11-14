@@ -1,7 +1,8 @@
-import { User } from '@prisma/client';
+import { User, UserRoleEnum } from '@prisma/client';
 import {
   IsDateString,
   IsEmail,
+  IsEnum,
   IsMongoId,
   IsOptional,
   IsString,
@@ -27,6 +28,9 @@ export class UserDto implements User {
   @IsUrl()
   @IsString()
   image: string;
+
+  @IsEnum(UserRoleEnum)
+  role: UserRoleEnum;
 
   @IsDateString()
   createdAt: Date;

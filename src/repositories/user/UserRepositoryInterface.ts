@@ -6,12 +6,12 @@ export interface UserRepositoryInterface {
   getUserById: (id: string) => Promise<UserDto>;
 
   createUser: (
-    body: Omit<UserDto, 'id' | 'createdAt' | 'updatedAt' | 'userName'>,
+    body: Pick<UserDto, 'email' | 'name' | 'image'>,
   ) => Promise<UserDto>;
 
   updateUser: (
     id: string,
-    body: Partial<Omit<UserDto, 'id' | 'createdAt' | 'updatedAt' | 'email'>>,
+    body: Partial<Pick<UserDto, 'name' | 'image'>>,
   ) => Promise<UserDto>;
 
   deleteUser: (id: string) => Promise<UserDto>;

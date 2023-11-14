@@ -11,14 +11,11 @@ export class PrismaUserRepository implements UserRepositoryInterface {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  async createUser(body: Omit<UserDto, 'id' | 'createdAt' | 'updatedAt'>) {
+  async createUser(body: Pick<UserDto, 'email' | 'name' | 'image'>) {
     return this.prisma.user.create({ data: body });
   }
 
-  async updateUser(
-    id: string,
-    body: Partial<Omit<UserDto, 'id' | 'createdAt' | 'updatedAt' | 'email'>>,
-  ) {
+  async updateUser(id: string, body: Partial<Pick<UserDto, 'name' | 'image'>>) {
     return this.prisma.user.update({ where: { id }, data: body });
   }
 
