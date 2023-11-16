@@ -14,6 +14,6 @@ export class MediaDetailsController {
   @Roles([UserRoleEnum.ADMIN])
   @UseGuards(RolesGuard)
   async createOrUpdateAllMediaDetails() {
-    await this.mediaDetailsService.createOrUpdateAllMediaItemsDetails();
+    return this.mediaDetailsService.createOrUpdateAllMediaItemsDetails();
   }
 }
