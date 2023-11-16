@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+  OnModuleInit,
+} from '@nestjs/common';
 import {
   MediaDetailsRepositoryInterface,
   MediaDetailsRepositorySymbol,
@@ -14,9 +21,16 @@ import { DetailsType } from '@/shared/dto/DetailsType';
 import { convertMediaDetailsToMediaDetailsInfo } from '@/shared/utils/convertMediaDetailsToMediaDetailsInfo';
 import { convertArrayToChunks } from '@/shared/utils/convertArrayToChunks';
 import { MediaItemDto } from '@/routes/mediaItem/dto/mediaItem.dto';
+import { Interval } from '@nestjs/schedule';
+import { getMillisecondsFromHours } from '@/shared/utils/getMillisecondsFromHours';
 
 @Injectable()
-export class MediaDetailsService {
+export class MediaDetailsService implements OnModuleInit {
+  private updatingProgress = {
+    successfulUpdates: 0,
+    failedUpdates: 0,
+  };
+  private readonly logger = new Logger('MediaDetailsService');
   private getApiUrl = generateApiUrl(this.configService.get('TMDB_API_URL'), {
     api_key: this.configService.get('TMDB_API_KEY'),
   });
@@ -28,6 +42,15 @@ export class MediaDetailsService {
     private readonly mediaItemRepository: MediaItemRepositoryInterface,
     private readonly configService: ConfigService,
   ) {}
+
+  async onModuleInit() {
+    this.createOrUpdateAllMediaItemsDetails();
+  }
+
+  @Interval(getMillisecondsFromHours(8))
+  async autoUpdateAllMediaDetails() {
+    this.createOrUpdateAllMediaItemsDetails();
+  }
 
   private async getMediaDetailsItemFromApi(
     mediaId: number,
@@ -62,10 +85,12 @@ export class MediaDetailsService {
         en,
       };
     } catch (error) {
-      throw new HttpException(
-        `${error.status}: Failed to get data from TMDB.`,
-        HttpStatus.BAD_GATEWAY,
-      );
+      this.logger.error('Failed to get data from TMDB.');
+
+      return {
+        ru: null,
+        en: null,
+      };
     }
   }
 
@@ -78,6 +103,8 @@ export class MediaDetailsService {
     const { ru, en } = await this.getAllMediaDetails(mediaId, mediaType);
 
     if (!ru || !en) {
+      this.updatingProgress.failedUpdates += 1;
+
       if (skipError) {
         return null;
       }
@@ -117,6 +144,8 @@ export class MediaDetailsService {
         });
       }
 
+      this.updatingProgress.successfulUpdates += 1;
+
       return mediaDetailsItem;
     } catch (error) {
       if (skipError) {
@@ -138,6 +167,11 @@ export class MediaDetailsService {
     }
 
     const chunks = convertArrayToChunks(mediaItems, 20);
+    let iteration = 1;
+    this.updatingProgress = {
+      successfulUpdates: 0,
+      failedUpdates: 0,
+    };
 
     for (const chunk of chunks) {
       const promiseArr = chunk.map((mediaItem) => {
@@ -150,16 +184,17 @@ export class MediaDetailsService {
       });
 
       await Promise.all(promiseArr);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      if (iteration < chunks.length) {
+        iteration += 1;
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }
 
-    return true;
-  }
+    this.logger.log(
+      `Successfully updated ${this.updatingProgress.successfulUpdates} media details. Failed to update ${this.updatingProgress.failedUpdates} media details`,
+    );
 
-  async getMediaDetailsItem(
-    mediaId: number,
-    mediaType: MediaDetailsDto['mediaType'],
-  ) {
-    return this.mediaDetailsRepository.getMediaDetailsItem(mediaId, mediaType);
+    return this.updatingProgress;
   }
 }
