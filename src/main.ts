@@ -8,7 +8,7 @@ import * as session from 'express-session';
 import { PrismaClientErrorFilter } from '@/filters/prismaClientError.filter';
 import { AllExceptionsFilter } from '@/filters/allException.filter';
 import { getMillisecondsFromDays } from '@/shared/utils/getMillisecondsFromDays';
-import { PrismaService } from '@/services/prisma.service';
+import { PrismaService } from '@/services/prisma/prisma.service';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import { getMillisecondsFromMins } from '@/shared/utils/getMillisecondsFromMins';
 

@@ -13,6 +13,9 @@ export class MediaItemDto implements MediaItem {
   @IsMongoId()
   id: string;
 
+  @IsMongoId()
+  mediaDetailsId: string;
+
   @IsNumber()
   mediaId: number;
 

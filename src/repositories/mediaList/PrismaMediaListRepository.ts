@@ -1,4 +1,4 @@
-import { PrismaService } from '@/services/prisma.service';
+import { PrismaService } from '@/services/prisma/prisma.service';
 import { MediaListRepositoryInterface } from '@/repositories/mediaList/MediaListRepositoryInterface';
 import { MediaListDto } from '@/routes/mediaList/dto/mediaList.dto';
 import { Injectable } from '@nestjs/common';

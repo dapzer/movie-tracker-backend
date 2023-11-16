@@ -8,6 +8,7 @@ import {
   MediaListRepositoryInterface,
   MediaListRepositorySymbol,
 } from '@/repositories/mediaList/MediaListRepositoryInterface';
+import { MediaDetailsService } from '@/routes/mediaDetails/mediaDetails.service';
 
 @Injectable()
 export class MediaItemService {
@@ -16,6 +17,7 @@ export class MediaItemService {
     private readonly mediaListRepository: MediaListRepositoryInterface,
     @Inject(MediaItemRepositorySymbol)
     private readonly mediaItemRepository: MediaItemRepositoryInterface,
+    private readonly mediaDetailsService: MediaDetailsService,
   ) {}
 
   private async isMediaItemOwner(
@@ -59,10 +61,18 @@ export class MediaItemService {
       throw new HttpException('Unauthorized.', HttpStatus.UNAUTHORIZED);
     }
 
+    const mediaDetails =
+      await this.mediaDetailsService.createOrUpdateMediaDetails(
+        mediaId,
+        mediaType,
+        null,
+      );
+
     return this.mediaItemRepository.createMediaItem(
       mediaId,
       mediaType,
       mediaListId,
+      mediaDetails.id,
     );
   }
 

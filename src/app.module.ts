@@ -4,8 +4,9 @@ import { MediaListModule } from '@/routes/mediaList/mediaList.module';
 import { MediaItemModule } from '@/routes/mediaItem/mediaItem.module';
 import { UserModule } from './routes/user/user.module';
 import { ProxyModule } from './routes/proxy/proxy.module';
-import { PrismaModule } from '@/services/prisma.module';
+import { PrismaModule } from '@/services/prisma/prisma.module';
 import { AuthModule } from '@/routes/auth/auth.module';
+import { MediaDetailsModule } from '@/routes/mediaDetails/mediaDetails.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from '@/routes/auth/auth.module';
     ProxyModule,
     PrismaModule,
     AuthModule,
+    MediaDetailsModule,
   ],
   controllers: [],
   providers: [],

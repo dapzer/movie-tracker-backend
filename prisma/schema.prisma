@@ -66,17 +66,52 @@ model MediaList {
 }
 
 model MediaItem {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  mediaListId  String        @db.ObjectId
-  mediaList    MediaList     @relation(fields: [mediaListId], references: [id], onDelete: Cascade)
-  mediaId      Int
-  mediaType    MediaTypeEnum
-  trackingData TrackingData
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt()
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  mediaListId    String        @db.ObjectId
+  mediaList      MediaList     @relation(fields: [mediaListId], references: [id], onDelete: Cascade)
+  mediaDetailsId String?       @db.ObjectId
+  mediaDetails   MediaDetails? @relation(fields: [mediaDetailsId], references: [id], onDelete: Cascade)
+  mediaId        Int
+  mediaType      MediaTypeEnum
+  trackingData   TrackingData
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt()
 
   @@unique([mediaId, mediaType, mediaListId])
   @@map("mediaItems")
+}
+
+model MediaDetails {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  mediaId   Int
+  mediaType MediaTypeEnum
+  score     Int?
+  en        MediaDetailsInfo
+  ru        MediaDetailsInfo
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt()
+  MediaItem MediaItem[]
+
+  @@unique([mediaId, mediaType])
+  @@map("mediaDetails")
+}
+
+type MediaDetailsInfo {
+  title         String?
+  originalTitle String?
+  poster        String?
+  seasons       MediaDetailsSeason[]
+}
+
+type MediaDetailsSeason {
+  air_date      String?
+  episode_count Int
+  id            Int
+  name          String?
+  overview      String?
+  poster_path   String?
+  season_number Int
+  vote_average  Int?
 }
 
 type TrackingData {

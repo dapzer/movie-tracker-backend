@@ -6,6 +6,7 @@ import { MediaItemRepositorySymbol } from '@/repositories/mediaItem/MediaItemRep
 import { PrismaMediaItemRepository } from '@/repositories/mediaItem/PrismaMediaItemRepository';
 import { MediaListRepositorySymbol } from '@/repositories/mediaList/MediaListRepositoryInterface';
 import { PrismaMediaListRepository } from '@/repositories/mediaList/PrismaMediaListRepository';
+import { MediaDetailsModule } from '@/routes/mediaDetails/mediaDetails.module';
 
 @Module({
   controllers: [MediaItemController],
@@ -14,6 +15,6 @@ import { PrismaMediaListRepository } from '@/repositories/mediaList/PrismaMediaL
     { provide: MediaListRepositorySymbol, useClass: PrismaMediaListRepository },
     { provide: MediaItemRepositorySymbol, useClass: PrismaMediaItemRepository },
   ],
-  imports: [MediaListModule],
+  imports: [MediaListModule, MediaDetailsModule],
 })
 export class MediaItemModule {}

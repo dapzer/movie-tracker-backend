@@ -1,4 +1,4 @@
-import { PrismaService } from '@/services/prisma.service';
+import { PrismaService } from '@/services/prisma/prisma.service';
 import { MediaItemRepositoryInterface } from '@/repositories/mediaItem/MediaItemRepositoryInterface';
 import { StatusNameEnum } from '@prisma/client';
 import { MediaItemDto } from '@/routes/mediaItem/dto/mediaItem.dto';
@@ -7,6 +7,10 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class PrismaMediaItemRepository implements MediaItemRepositoryInterface {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getAllMediaItems() {
+    return this.prisma.mediaItem.findMany();
+  }
 
   async getMediaItemById(id: string) {
     return this.prisma.mediaItem.findUnique({
@@ -19,6 +23,9 @@ export class PrismaMediaItemRepository implements MediaItemRepositoryInterface {
       where: {
         mediaListId,
       },
+      include: {
+        mediaDetails: true,
+      },
     });
   }
 
@@ -26,12 +33,14 @@ export class PrismaMediaItemRepository implements MediaItemRepositoryInterface {
     mediaId: number,
     mediaType: MediaItemDto['mediaType'],
     mediaListId: string,
+    mediaDetailsId: string,
   ) {
     return this.prisma.mediaItem.create({
       data: {
         mediaListId,
         mediaId,
         mediaType,
+        mediaDetailsId,
         trackingData: {
           currentStatus: StatusNameEnum.NOT_VIEWED,
           note: '',
@@ -42,6 +51,9 @@ export class PrismaMediaItemRepository implements MediaItemRepositoryInterface {
             currentEpisode: 1,
           },
         },
+      },
+      include: {
+        mediaDetails: true,
       },
     });
   }
@@ -62,6 +74,22 @@ export class PrismaMediaItemRepository implements MediaItemRepositoryInterface {
       where: { id },
       data: {
         trackingData,
+      },
+      include: {
+        mediaDetails: true,
+      },
+    });
+  }
+
+  async updateMediaItem(
+    id: string,
+    data: Partial<Pick<MediaItemDto, 'mediaDetailsId' | 'mediaListId'>>,
+  ) {
+    return this.prisma.mediaItem.update({
+      where: { id },
+      data,
+      include: {
+        mediaDetails: true,
       },
     });
   }
