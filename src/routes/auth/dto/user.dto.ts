@@ -29,8 +29,8 @@ export class UserDto implements User {
   @IsString()
   image: string;
 
-  @IsEnum(UserRoleEnum)
-  role: UserRoleEnum;
+  @IsEnum(UserRoleEnum, { each: true })
+  roles: UserRoleEnum[];
 
   @IsDateString()
   createdAt: Date;
