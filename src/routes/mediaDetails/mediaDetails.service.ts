@@ -28,7 +28,8 @@ import { getMillisecondsFromHours } from '@/shared/utils/getMillisecondsFromHour
 export class MediaDetailsService implements OnModuleInit {
   private updatingProgress = {
     successfulUpdates: 0,
-    failedUpdates: 0,
+    failedUpdatesByApi: 0,
+    failedUpdatesByDb: 0,
   };
   private readonly logger = new Logger('MediaDetailsService');
   private getApiUrl = generateApiUrl(this.configService.get('TMDB_API_URL'), {
@@ -103,7 +104,7 @@ export class MediaDetailsService implements OnModuleInit {
     const { ru, en } = await this.getAllMediaDetails(mediaId, mediaType);
 
     if (!ru || !en) {
-      this.updatingProgress.failedUpdates += 1;
+      this.updatingProgress.failedUpdatesByApi += 1;
 
       if (skipError) {
         return null;
@@ -148,7 +149,7 @@ export class MediaDetailsService implements OnModuleInit {
 
       return mediaDetailsItem;
     } catch (error) {
-      this.updatingProgress.failedUpdates += 1;
+      this.updatingProgress.failedUpdatesByDb += 1;
 
       if (skipError) {
         return null;
@@ -172,7 +173,8 @@ export class MediaDetailsService implements OnModuleInit {
     let iteration = 1;
     this.updatingProgress = {
       successfulUpdates: 0,
-      failedUpdates: 0,
+      failedUpdatesByApi: 0,
+      failedUpdatesByDb: 0,
     };
 
     for (const chunk of chunks) {
@@ -194,7 +196,7 @@ export class MediaDetailsService implements OnModuleInit {
     }
 
     this.logger.log(
-      `Successfully updated ${this.updatingProgress.successfulUpdates} media details. Failed to update ${this.updatingProgress.failedUpdates} media details`,
+      `Successful updates: ${this.updatingProgress.successfulUpdates} / Failed updates by API: ${this.updatingProgress.failedUpdatesByApi} / Failed updates by DB: ${this.updatingProgress.failedUpdatesByDb}`,
     );
 
     return this.updatingProgress;
